@@ -3,13 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { CONFIG_FILENAME, defaultConfig, saveConfig, type VfConfig } from '../config'
 import { ensureHttpClient } from '../utils/http-client'
-
-async function hasDependency(root: string, name: string): Promise<boolean> {
-  const pkgPath = path.join(root, 'package.json')
-  if (!(await fs.pathExists(pkgPath))) return false
-  const pkg = await fs.readJson(pkgPath)
-  return Boolean(pkg.dependencies?.[name] || pkg.devDependencies?.[name])
-}
+import { hasDependency } from '../utils/package'
 
 async function detectAlias(root: string): Promise<string | null> {
   const tsconfigPath = path.join(root, 'tsconfig.json')

@@ -1,0 +1,26 @@
+import { httpClient } from '{{alias}}/shared/http/client'
+import type { {{Name}}, Create{{Name}}Dto, Update{{Name}}Dto } from '../types/{{name}}.types'
+
+const RESOURCE = '/{{name}}'
+
+export const {{nameCamel}}Service = {
+  async getAll(): Promise<{{Name}}[]> {
+    return httpClient.get<{{Name}}[]>(RESOURCE)
+  },
+
+  async getById(id: string): Promise<{{Name}}> {
+    return httpClient.get<{{Name}}>(`${RESOURCE}/${id}`)
+  },
+
+  async create(payload: Create{{Name}}Dto): Promise<{{Name}}> {
+    return httpClient.post<{{Name}}>(RESOURCE, payload)
+  },
+
+  async update(id: string, payload: Update{{Name}}Dto): Promise<{{Name}}> {
+    return httpClient.put<{{Name}}>(`${RESOURCE}/${id}`, payload)
+  },
+
+  async remove(id: string): Promise<void> {
+    return httpClient.delete<void>(`${RESOURCE}/${id}`)
+  },
+}

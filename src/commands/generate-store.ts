@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { loadConfig } from '../config'
 import { camelCase, kebabCase, pascalCase } from '../utils/case'
+import { hasDependency } from '../utils/package'
 import { renderTemplate } from '../utils/render'
 
 interface Options {
@@ -64,6 +65,8 @@ export async function generateStore(name: string, options: Options) {
 
   if (!config.usesPinia) {
     log.warn('Pinia not enabled in vf.config.json. Generating store with reactive() fallback.')
+  } else if (!(await hasDependency(root, 'pinia'))) {
+    log.warn('"pinia" not found in package.json — run "npm install pinia" and set up createPinia() in main.ts.')
   }
 
   const storePath = path.join(featurePath, 'stores', `${resourceName}.store.ts`)

@@ -1,44 +1,16 @@
 import { ref } from 'vue'
 import { {{nameCamel}}Service } from '../services/{{name}}.service'
-import type { {{Name}}, Create{{Name}}Dto, Update{{Name}}Dto } from '../types/{{name}}.types'
+import type { {{Name}} } from '../types/{{name}}.types'
 
 export function use{{Name}}Service() {
   const items = ref<{{Name}}[]>([])
-  const selected = ref<{{Name}} | null>(null)
 
   async function fetchAll() {
     items.value = await {{nameCamel}}Service.getAll()
   }
 
-  async function fetchById(id: string) {
-    selected.value = await {{nameCamel}}Service.getById(id)
-  }
-
-  async function create(payload: Create{{Name}}Dto) {
-    const created = await {{nameCamel}}Service.create(payload)
-    items.value.push(created)
-    return created
-  }
-
-  async function update(id: string, payload: Update{{Name}}Dto) {
-    const updated = await {{nameCamel}}Service.update(id, payload)
-    const index = items.value.findIndex((i) => i.id === id)
-    if (index !== -1) items.value[index] = updated
-    return updated
-  }
-
-  async function remove(id: string) {
-    await {{nameCamel}}Service.remove(id)
-    items.value = items.value.filter((i) => i.id !== id)
-  }
-
   return {
     items,
-    selected,
     fetchAll,
-    fetchById,
-    create,
-    update,
-    remove,
   }
 }

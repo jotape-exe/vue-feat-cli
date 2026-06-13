@@ -5,7 +5,7 @@ export function use{{Name}}Page() {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const { items, fetchAll } = use{{Name}}Service()
+  const { items, selected, fetchAll, fetchById, create, update, remove } = use{{Name}}Service()
 
   async function load() {
     loading.value = true
@@ -19,10 +19,27 @@ export function use{{Name}}Page() {
     }
   }
 
+  async function loadById(id: string) {
+    loading.value = true
+    error.value = null
+    try {
+      await fetchById(id)
+    } catch (e) {
+      error.value = (e as Error).message
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     items,
+    selected,
     loading,
     error,
     load,
+    loadById,
+    create,
+    update,
+    remove,
   }
 }

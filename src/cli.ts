@@ -11,6 +11,8 @@ const cli = cac('vf')
 cli
   .command('generate:feat <name>', 'Scaffold a complete feature module')
   .alias('g:feat')
+  .option('--with-crud', 'Generate full CRUD methods in service and composables')
+  .option('--register-route', 'Auto-register the route in the router file (requires usesVueRouter: true)')
   .action(generateFeat)
 
 cli
