@@ -1,0 +1,25 @@
+import axios from 'axios'
+
+const instance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+export const httpClient = {
+  get: async <T>(url: string, config?: Parameters<typeof instance.get>[1]) =>
+    (await instance.get<T>(url, config)).data,
+
+  post: async <T>(url: string, body?: unknown, config?: Parameters<typeof instance.post>[2]) =>
+    (await instance.post<T>(url, body, config)).data,
+
+  put: async <T>(url: string, body?: unknown, config?: Parameters<typeof instance.put>[2]) =>
+    (await instance.put<T>(url, body, config)).data,
+
+  patch: async <T>(url: string, body?: unknown, config?: Parameters<typeof instance.patch>[2]) =>
+    (await instance.patch<T>(url, body, config)).data,
+
+  delete: async <T>(url: string, config?: Parameters<typeof instance.delete>[1]) =>
+    (await instance.delete<T>(url, config)).data,
+}

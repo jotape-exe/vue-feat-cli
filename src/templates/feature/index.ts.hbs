@@ -1,0 +1,8 @@
+export * from './services/{{name}}.service'
+export * from './composables/use{{Name}}Service'
+export * from './composables/use{{Name}}Page'
+export * from './stores/{{name}}.store'
+export * from './types/{{name}}.types'
+{{#if usesVueRouter}}
+export * from './routes'
+{{/if}}

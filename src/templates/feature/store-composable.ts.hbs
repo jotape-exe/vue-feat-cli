@@ -1,0 +1,28 @@
+import { reactive, readonly } from 'vue'
+import type { {{Name}} } from '../types/{{name}}.types'
+
+interface {{Name}}State {
+  items: {{Name}}[]
+  selected: {{Name}} | null
+}
+
+const state = reactive<{{Name}}State>({
+  items: [],
+  selected: null,
+})
+
+export function use{{Name}}Store() {
+  function setItems(items: {{Name}}[]) {
+    state.items = items
+  }
+
+  function select(item: {{Name}}) {
+    state.selected = item
+  }
+
+  return {
+    state: readonly(state),
+    setItems,
+    select,
+  }
+}

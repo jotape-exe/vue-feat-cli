@@ -1,0 +1,33 @@
+{
+  "name": "vue-feat-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx src/cli.ts",
+    "build": "tsup src/cli.ts --format esm --dts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "vf": "./bin/vf.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "cac": "^7.0.0",
+    "fs-extra": "^11.3.5",
+    "handlebars": "^4.7.9",
+    "prettier": "^3.8.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.9.3",
+    "tsup": "^8.5.1",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}

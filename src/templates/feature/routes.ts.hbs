@@ -1,0 +1,9 @@
+import type { RouteRecordRaw } from 'vue-router'
+
+export const {{nameCamel}}Routes: RouteRecordRaw[] = [
+  {
+    path: '/{{name}}',
+    name: '{{name}}',
+    component: () => import('./views/{{Name}}View.vue'),
+  },
+]

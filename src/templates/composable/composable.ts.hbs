@@ -1,0 +1,22 @@
+import { ref, computed } from 'vue'
+
+export function use{{Name}}() {
+  const state = ref<unknown>(null)
+
+  const isReady = computed(() => state.value !== null)
+
+  function set{{Name}}(value: unknown) {
+    state.value = value
+  }
+
+  function reset() {
+    state.value = null
+  }
+
+  return {
+    state,
+    isReady,
+    set{{Name}},
+    reset,
+  }
+}

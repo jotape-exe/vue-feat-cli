@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { use{{Name}}Page } from '../composables/use{{Name}}Page'
+
+const { items, loading, error, load } = use{{Name}}Page()
+
+onMounted(load)
+</script>
+
+<template>
+  <section class="{{name}}-view">
+    <h1>{{Name}}</h1>
+
+    <p v-if="loading">Loading...</p>
+    <p v-else-if="error">\{{ error }}</p>
+
+    <ul v-else>
+      <li v-for="item in items" :key="item.id">
+        \{{ item.id }}
+      </li>
+    </ul>
+  </section>
+</template>
+
+<style scoped>
+.{{name}}-view {
+  padding: 1rem;
+}
+</style>

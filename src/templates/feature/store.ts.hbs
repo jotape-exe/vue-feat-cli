@@ -1,0 +1,26 @@
+import { computed, ref } from 'vue'
+import { defineStore } from 'pinia'
+import type { {{Name}} } from '../types/{{name}}.types'
+
+export const use{{Name}}Store = defineStore('{{nameCamel}}', () => {
+  const items = ref<{{Name}}[]>([])
+  const selected = ref<{{Name}} | null>(null)
+
+  const count = computed(() => items.value.length)
+
+  function setItems(newItems: {{Name}}[]) {
+    items.value = newItems
+  }
+
+  function select(item: {{Name}}) {
+    selected.value = item
+  }
+
+  return {
+    items,
+    selected,
+    count,
+    setItems,
+    select,
+  }
+})
