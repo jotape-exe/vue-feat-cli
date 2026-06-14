@@ -73,7 +73,7 @@ export async function generateFeat(name: string, options: Options = {}) {
   }
 
   for (const file of files) {
-    const created = await renderTemplate({ ...file, outputPath: file.out, context })
+    const created = await renderTemplate({ ...file, outputPath: file.out, context, templatesDir: config.templatesDir, root })
     log.success(`Created: ${path.relative(root, created!)}`)
   }
 

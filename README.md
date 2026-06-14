@@ -189,6 +189,75 @@ The path alias (`@` by default) must point to `src/` in your `tsconfig.json`:
 
 ---
 
+## Custom Templates
+
+You can override any scaffold template on a per-project basis by creating `.hbs` files in a local folder and pointing `vf.config.json` to it.
+
+### Setup
+
+**Option A — via `vf init`:**
+Answer `y` when asked _"Use custom templates?"_. This sets `templatesDir: ".vf/templates"` in `vf.config.json` and creates the empty folder.
+
+**Option B — copy all defaults for editing:**
+```bash
+vf templates:init
+```
+This copies every built-in template to `.vf/templates/`, ready to edit. It also adds `"templatesDir": ".vf/templates"` to `vf.config.json` if not already set.
+
+**Option C — manual:**
+Add `"templatesDir": ".vf/templates"` to your `vf.config.json` and create only the templates you want to override.
+
+### File structure
+
+Your local templates must mirror the built-in structure:
+
+```
+.vf/templates/
+├── component/
+│   └── Component.vue.hbs
+├── composable/
+│   └── composable.ts.hbs
+└── feature/
+    ├── service.ts.hbs
+    ├── service-crud.ts.hbs
+    ├── service-composable.ts.hbs
+    ├── service-composable-crud.ts.hbs
+    ├── page-composable.ts.hbs
+    ├── page-composable-crud.ts.hbs
+    ├── store.ts.hbs
+    ├── store-composable.ts.hbs
+    ├── types.ts.hbs
+    ├── types-crud.ts.hbs
+    ├── index.ts.hbs
+    ├── routes.ts.hbs
+    └── View.vue.hbs
+```
+
+You only need to include the files you want to override — missing files fall back to the built-in defaults automatically.
+
+### Handlebars context variables
+
+| Variable | Type | Available in |
+|---|---|---|
+| `name` | `string` | all templates — kebab-case feature name |
+| `Name` | `string` | all templates — PascalCase feature name |
+| `nameCamel` | `string` | feature templates — camelCase feature name |
+| `alias` | `string` | feature templates — import alias from config (e.g. `@`) |
+| `usesVueRouter` | `boolean` | feature templates |
+
+### `.gitignore` recommendation
+
+Commit `.vf/templates/` to your repo so the whole team uses the same overrides:
+
+```
+# .gitignore — do NOT ignore .vf/templates if you want team-wide overrides
+# .vf/          ← remove this line if present
+```
+
+If you want the overrides to be personal only, add `.vf/` to `.gitignore`.
+
+---
+
 ## Development
 
 ```bash

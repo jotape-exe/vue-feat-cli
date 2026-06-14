@@ -30,22 +30,32 @@ function exitIfCancelled<T>(value: T | symbol): T {
   return value
 }
 
-export async function init() {
+interface InitOptions {
+  yes?: boolean
+}
+
+export async function init(options: InitOptions = {}) {
+  const { yes = false } = options
+
   intro('⚙️  Configuring vue-feat-cli')
 
   const root = process.cwd()
   const configPath = path.join(root, CONFIG_FILENAME)
 
   if (await fs.pathExists(configPath)) {
-    const overwrite = exitIfCancelled(
-      await confirm({
-        message: `${CONFIG_FILENAME} already exists. Overwrite?`,
-        initialValue: false,
-      }),
-    )
-    if (!overwrite) {
-      cancel('Operation cancelled.')
-      process.exit(0)
+    if (!yes) {
+      const overwrite = exitIfCancelled(
+        await confirm({
+          message: `${CONFIG_FILENAME} already exists. Overwrite?`,
+          initialValue: false,
+        }),
+      )
+      if (!overwrite) {
+        cancel('Operation cancelled.')
+        process.exit(0)
+      }
+    } else {
+      log.info(`${CONFIG_FILENAME} already exists — overwriting (--yes).`)
     }
   }
 
@@ -63,40 +73,59 @@ export async function init() {
   log.info(`Axios: ${hasAxios ? '✅ found' : '❌ not found (will use fetch)'}`)
   log.info(`Detected alias: ${detectedAlias ?? 'none (defaulting to "@")'}`)
 
-  const usesPinia = exitIfCancelled(
-    await confirm({ message: 'Use Pinia for feature stores?', initialValue: hasPinia }),
-  )
+  const usesPinia = yes
+    ? hasPinia
+    : exitIfCancelled(
+        await confirm({ message: 'Use Pinia for feature stores?', initialValue: hasPinia }),
+      )
 
-  const usesVueRouter = exitIfCancelled(
-    await confirm({ message: 'Does this project use Vue Router?', initialValue: hasVueRouter }),
-  )
+  const usesVueRouter = yes
+    ? hasVueRouter
+    : exitIfCancelled(
+        await confirm({ message: 'Does this project use Vue Router?', initialValue: hasVueRouter }),
+      )
 
-  const usesTanstackQuery = exitIfCancelled(
-    await confirm({
-      message: 'Use TanStack Query for data composables?',
-      initialValue: hasTanstackQuery,
-    }),
-  )
+  const usesTanstackQuery = yes
+    ? hasTanstackQuery
+    : exitIfCancelled(
+        await confirm({
+          message: 'Use TanStack Query for data composables?',
+          initialValue: hasTanstackQuery,
+        }),
+      )
 
-  const httpClient = exitIfCancelled(
-    await select({
-      message: 'Which HTTP client should services use?',
-      options: [
-        { value: 'fetch', label: 'fetch (native)' },
-        { value: 'axios', label: 'axios' },
-      ],
-      initialValue: hasAxios ? 'axios' : 'fetch',
-    }),
-  )
+  const httpClient = yes
+    ? (hasAxios ? 'axios' : 'fetch')
+    : exitIfCancelled(
+        await select({
+          message: 'Which HTTP client should services use?',
+          options: [
+            { value: 'fetch', label: 'fetch (native)' },
+            { value: 'axios', label: 'axios' },
+          ],
+          initialValue: hasAxios ? 'axios' : 'fetch',
+        }),
+      )
 
-  const alias = exitIfCancelled(
-    await text({
-      message: 'Import alias for absolute paths (e.g. "@")',
-      placeholder: '@',
-      defaultValue: detectedAlias ?? '@',
-      initialValue: detectedAlias ?? '@',
-    }),
-  )
+  const alias = yes
+    ? (detectedAlias ?? '@')
+    : exitIfCancelled(
+        await text({
+          message: 'Import alias for absolute paths (e.g. "@")',
+          placeholder: '@',
+          defaultValue: detectedAlias ?? '@',
+          initialValue: detectedAlias ?? '@',
+        }),
+      )
+
+  const useCustomTemplates = yes
+    ? false
+    : exitIfCancelled(
+        await confirm({
+          message: 'Use custom templates? (creates .vf/templates/ for overrides)',
+          initialValue: false,
+        }),
+      )
 
   const config: VfConfig = {
     ...defaultConfig,
@@ -105,9 +134,15 @@ export async function init() {
     usesTanstackQuery,
     httpClient: httpClient as 'fetch' | 'axios',
     alias: alias.trim() || '@',
+    ...(useCustomTemplates ? { templatesDir: '.vf/templates' } : {}),
   }
 
   await saveConfig(root, config)
+
+  if (useCustomTemplates) {
+    await fs.ensureDir(path.join(root, '.vf', 'templates'))
+    log.info('Created .vf/templates/ — add .hbs files here to override defaults. Run "vf templates:init" to copy all defaults.')
+  }
   log.success(`Configuration saved to ${CONFIG_FILENAME}`)
 
   await fs.ensureDir(path.join(root, config.sharedDir, 'components'))

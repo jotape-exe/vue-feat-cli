@@ -10,6 +10,7 @@ export interface VfConfig {
   usesPinia: boolean
   usesVueRouter: boolean
   usesTanstackQuery: boolean
+  templatesDir?: string
 }
 
 export const defaultConfig: VfConfig = {

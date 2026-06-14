@@ -1,6 +1,7 @@
 import { cancel, intro, isCancel, log, outro, text } from '@clack/prompts'
 import fs from 'fs-extra'
 import path from 'path'
+import { loadConfig } from '../config'
 import { kebabCase, pascalCase } from '../utils/case'
 import { renderTemplate } from '../utils/render'
 
@@ -18,6 +19,7 @@ export async function generateComponent(name: string, options: Options) {
   intro(`🧱 Generating component: ${Name}.vue`)
 
   const root = process.cwd()
+  const config = await loadConfig(root)
   let feature = options.feature
 
   if (feature === undefined) {
@@ -37,7 +39,7 @@ export async function generateComponent(name: string, options: Options) {
 
   if (feature) {
     feature = kebabCase(feature)
-    const featurePath = path.join(root, 'src/features', feature)
+    const featurePath = path.join(root, config.featuresDir, feature)
 
     if (!(await fs.pathExists(featurePath))) {
       log.error(`Feature "${feature}" not found. Run "vf generate:feat ${feature}" first.`)
@@ -46,7 +48,7 @@ export async function generateComponent(name: string, options: Options) {
 
     basePath = path.join(featurePath, 'components', subPath)
   } else {
-    basePath = path.join(root, 'src/shared/components', subPath)
+    basePath = path.join(root, config.sharedDir, 'components', subPath)
   }
 
   const context = {
@@ -60,6 +62,8 @@ export async function generateComponent(name: string, options: Options) {
     template: 'component/Component.vue.hbs',
     outputPath,
     context,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   outro(`Created: ${path.relative(root, created!)}`)

@@ -56,6 +56,8 @@ export async function generateComposable(name: string, options: Options) {
     template: 'composable/composable.ts.hbs',
     outputPath,
     context,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   outro(`Created: ${path.relative(root, created!)}`)
