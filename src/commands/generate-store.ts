@@ -51,6 +51,8 @@ export async function generateStore(name: string, options: Options) {
     outputPath: typesPath,
     context,
     skipIfExists: true,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   if (typesCreated) {
@@ -74,6 +76,8 @@ export async function generateStore(name: string, options: Options) {
     template: storeTemplate,
     outputPath: storePath,
     context,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   outro(`Created: ${path.relative(root, created!)}`)

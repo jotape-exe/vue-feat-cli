@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // In dev (tsx), __dirname = src/utils/ → ../templates = src/templates/
 // In prod (tsup bundle), __dirname = dist/ → ./templates = dist/templates/
-const TEMPLATES_DIR = __dirname.endsWith('utils')
+export const TEMPLATES_DIR = __dirname.endsWith('utils')
   ? path.resolve(__dirname, '../templates')
   : path.resolve(__dirname, 'templates')
 
@@ -16,6 +16,21 @@ interface RenderOptions {
   outputPath: string
   context: Record<string, unknown>
   skipIfExists?: boolean
+  templatesDir?: string
+  root?: string
+}
+
+async function resolveTemplatePath(template: string, root: string, templatesDir: string): Promise<string> {
+  const safeRoot = path.resolve(root) + path.sep
+  const localPath = path.resolve(root, templatesDir, template)
+
+  if (!localPath.startsWith(safeRoot)) {
+    throw new Error(`Security: template path "${template}" escapes the project root.`)
+  }
+
+  if (await fs.pathExists(localPath)) return localPath
+
+  return path.join(TEMPLATES_DIR, template)
 }
 
 export async function renderTemplate({
@@ -23,8 +38,14 @@ export async function renderTemplate({
   outputPath,
   context,
   skipIfExists = false,
+  templatesDir,
+  root,
 }: RenderOptions): Promise<string | null> {
-  const templatePath = path.join(TEMPLATES_DIR, template)
+  const templatePath =
+    templatesDir && root
+      ? await resolveTemplatePath(template, root, templatesDir)
+      : path.join(TEMPLATES_DIR, template)
+
   const raw = await fs.readFile(templatePath, 'utf-8')
 
   const compiled = Handlebars.compile(raw)

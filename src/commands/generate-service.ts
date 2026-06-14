@@ -54,6 +54,8 @@ export async function generateService(name: string, options: Options) {
     outputPath: typesPath,
     context,
     skipIfExists: true,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   if (typesCreated) {
@@ -67,6 +69,8 @@ export async function generateService(name: string, options: Options) {
     template: 'feature/service.ts.hbs',
     outputPath: servicePath,
     context,
+    templatesDir: config.templatesDir,
+    root,
   })
 
   outro(`Created: ${path.relative(root, created!)}`)

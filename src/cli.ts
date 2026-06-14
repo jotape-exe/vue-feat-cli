@@ -5,6 +5,7 @@ import { generateFeat } from './commands/generate-feat'
 import { generateService } from './commands/generate-service'
 import { generateStore } from './commands/generate-store'
 import { init } from './commands/init'
+import { initTemplates } from './commands/init-templates'
 
 const cli = cac('vf')
 
@@ -41,7 +42,12 @@ cli
 
 cli
   .command('init', 'Configura o vue-feat-cli no projeto atual')
+  .option('--yes', 'Accept all detected defaults without prompting (useful for CI)')
   .action(init)
+
+cli
+  .command('templates:init', 'Copy default templates to .vf/templates/ for local customization')
+  .action(initTemplates)
 
 cli.help()
 cli.version('0.1.0')
