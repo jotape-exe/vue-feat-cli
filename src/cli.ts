@@ -4,6 +4,7 @@ import { generateComposable } from './commands/generate-composable'
 import { generateFeat } from './commands/generate-feat'
 import { generateService } from './commands/generate-service'
 import { generateStore } from './commands/generate-store'
+import { help } from './commands/help'
 import { init } from './commands/init'
 import { initTemplates } from './commands/init-templates'
 
@@ -49,6 +50,10 @@ cli
   .command('templates:init', 'Copy default templates to .vf/templates/ for local customization')
   .action(initTemplates)
 
+cli
+  .command('help [command]', 'Show detailed help for a command')
+  .action(help)
+
 cli.help()
-cli.version('0.1.0')
+cli.version('1.0.0')
 cli.parse()

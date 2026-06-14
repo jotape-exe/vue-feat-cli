@@ -22,9 +22,25 @@ vf init
 
 # 2. Generate your first feature
 vf g:feat Product
+
+# Get help at any time
+vf help
+vf help generate:feat
 ```
 
 ## Commands
+
+### `help`
+
+Shows an overview of all commands and their descriptions. Pass a command name (or its alias) to get detailed docs with options, examples, and related commands.
+
+```bash
+vf help                    # overview interativo de todos os comandos
+vf help generate:feat      # docs detalhados de generate:feat
+vf help g:feat             # aliases também funcionam
+```
+
+---
 
 ### `init`
 
@@ -267,4 +283,4 @@ npm run build    # compile to dist/
 
 ## License
 
-ISC
+MIT
