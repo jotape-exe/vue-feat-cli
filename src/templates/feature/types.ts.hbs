@@ -2,6 +2,3 @@ export interface {{Name}} {
   id: string
   // TODO: add domain fields
 }
-
-export type Create{{Name}}Dto = Omit<{{Name}}, 'id'>
-export type Update{{Name}}Dto = Partial<Create{{Name}}Dto>
