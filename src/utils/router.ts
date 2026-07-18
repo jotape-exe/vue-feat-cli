@@ -32,14 +32,34 @@ function insertBeforeRoutesClose(content: string, spread: string): string {
   }
   if (closeIdx === -1) return content
 
-  // Walk back to the start of the ']' line so we insert before it (preserving its indentation)
+  const inner = content.slice(openBracket + 1, closeIdx)
+
+  // Indentation of the line that contains "routes:"
+  let routesLineStart = routesKeyword
+  while (routesLineStart > 0 && content[routesLineStart - 1] !== '\n') routesLineStart--
+  const routesIndent = content.slice(routesLineStart, routesKeyword).match(/^(\s*)/)?.[1] ?? '  '
+  const innerIndent = `${routesIndent}  `
+
+  if (inner.trim() === '') {
+    // Empty array written inline (e.g. "routes: []") — expand it into a multi-line array.
+    // Walking back to "the line containing ']'" doesn't work here because "[" and "]"
+    // share a line with no content between them, which used to insert the spread as a
+    // sibling property of "routes" instead of as an element inside it.
+    return (
+      content.slice(0, openBracket + 1) +
+      `\n${innerIndent}${spread},\n${routesIndent}` +
+      content.slice(closeIdx)
+    )
+  }
+
+  // Non-empty array — walk back to the start of the "]" line so we insert before it
+  // (preserving its indentation)
   let lineStart = closeIdx
   while (lineStart > 0 && content[lineStart - 1] !== '\n') lineStart--
 
-  // Infer indentation from the last content line before the ']' line
   const before = content.substring(0, lineStart)
   const lastContentLine = before.split('\n').filter((l) => l.trim()).pop() ?? ''
-  const indent = lastContentLine.match(/^(\s+)/)?.[1] ?? '    '
+  const indent = lastContentLine.match(/^(\s+)/)?.[1] ?? innerIndent
 
   return before + `${indent}${spread},\n` + content.substring(lineStart)
 }
