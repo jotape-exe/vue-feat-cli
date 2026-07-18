@@ -5,13 +5,17 @@ interface RequestOptions extends RequestInit {
 }
 
 function buildUrl(path: string, params?: RequestOptions['params']) {
-  const url = new URL(path.startsWith('http') ? path : `${BASE_URL}${path}`)
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.set(key, String(value))
-    })
-  }
-  return url.toString()
+  const full = path.startsWith('http') ? path : `${BASE_URL}${path}`
+  if (!params) return full
+
+  // Avoid `new URL()` here: it throws on a relative `full` (e.g. "/job") when
+  // BASE_URL is unset, which is the default right after scaffolding.
+  const query = new URLSearchParams(
+    Object.entries(params).map(([key, value]) => [key, String(value)]),
+  ).toString()
+
+  if (!query) return full
+  return `${full}${full.includes('?') ? '&' : '?'}${query}`
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
