@@ -55,5 +55,5 @@ cli
   .action(help)
 
 cli.help()
-cli.version('1.0.0')
+cli.version('26.9.0')
 cli.parse()
