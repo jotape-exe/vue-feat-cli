@@ -20,7 +20,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "vf": "./bin/vf.js"
+    "vf": "bin/vf.js"
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
