@@ -1,7 +1,15 @@
 {
   "name": "vue-feat-cli",
-  "version": "26.9.0",
+  "version": "26.9.1",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jotape-exe/vue-feat-cli.git"
+  },
+  "homepage": "https://github.com/jotape-exe/vue-feat-cli#readme",
+  "bugs": {
+    "url": "https://github.com/jotape-exe/vue-feat-cli/issues"
+  },
   "main": "./dist/cli.js",
   "files": [
     "dist",
@@ -20,7 +28,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "vf": "./bin/vf.js"
+    "vf": "bin/vf.js"
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
