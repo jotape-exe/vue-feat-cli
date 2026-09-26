@@ -61,11 +61,14 @@ Produces `vf.config.json`:
   "httpClient": "fetch",
   "usesPinia": true,
   "usesVueRouter": true,
-  "usesTanstackQuery": false
+  "usesTanstackQuery": false,
+  "layers": { "store": true }
 }
 ```
 
 All subsequent generators read this file. If it doesn't exist, safe defaults are used (`fetch`, no Pinia, no Router).
+
+`layers` is optional — set any of `service, serviceComposable, pageComposable, store, types, index, routes, view` to `false` to disable it by default (re-enable per-run with `--only`).
 
 ---
 
@@ -98,6 +101,27 @@ src/features/product/
 ```
 
 Without Vue Router, `routes.ts` and `views/` are omitted and a blank `views/` folder is created instead.
+
+#### Partial generation (layers)
+
+```bash
+vf g:feat Billing --only service,store              # only these layers
+vf g:feat Billing --exclude view,routes             # everything except
+vf g:feat Billing --no-store --no-types             # convenience negations
+# also: --no-service --no-composables --no-view --no-routes --no-index
+```
+
+Layer names: `service, serviceComposable, pageComposable, store, types, index, routes, view` (`composables` = both composables).
+
+#### Headless / agent-friendly flags (all generators)
+
+```bash
+vf g:feat Product --dry-run --json    # preview without writing, pure-JSON stdout
+vf g:feat Product --json              # write + emit { ok, files[], warnings[] }
+vf g:feat Product --force --json      # overwrite existing files
+```
+
+In `--json` mode stdout is parseable JSON only — warnings go into `warnings[]`, per-file results into `files[]` (`created | overwritten | skipped | dry-run | exists`). Exit code is `1` on failure.
 
 ---
 
@@ -143,10 +167,31 @@ vf g:store product --feature product
 
 ---
 
+### `doctor`
+
+Diagnoses config, directories, tsconfig alias, deps vs config, http client and router. Also lists built-in templates + variable names.
+
+```bash
+vf doctor           # human-readable
+vf doctor --json    # machine-readable (run this first in agents/CI)
+```
+
+---
+
+### `agents:init`
+
+Generates `AGENTS.md` at the project root with stack, layering rules and the CLI contract. Commit it so every agent follows the same conventions.
+
+```bash
+vf agents:init
+vf agents:init --force   # regenerate after changing vf.config.json
+```
+
+---
+
 ## Architecture
 
 Each feature follows a strict layered separation:
-
 ```
 service.ts
     └── useXxxService.ts   ← business composable: data refs + CRUD, no UI state

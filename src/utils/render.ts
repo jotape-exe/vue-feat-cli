@@ -15,9 +15,10 @@ interface RenderOptions {
   template: string
   outputPath: string
   context: Record<string, unknown>
-  skipIfExists?: boolean
-  templatesDir?: string
-  root?: string
+  skipIfExists?: boolean | undefined
+  overwrite?: boolean | undefined
+  templatesDir?: string | undefined
+  root?: string | undefined
 }
 
 async function resolveTemplatePath(template: string, root: string, templatesDir: string): Promise<string> {
@@ -38,6 +39,7 @@ export async function renderTemplate({
   outputPath,
   context,
   skipIfExists = false,
+  overwrite = false,
   templatesDir,
   root,
 }: RenderOptions): Promise<string | null> {
@@ -62,7 +64,7 @@ export async function renderTemplate({
 
   if (await fs.pathExists(outputPath)) {
     if (skipIfExists) return null
-    throw new Error(`File already exists: ${outputPath}`)
+    if (!overwrite) throw new Error(`File already exists: ${outputPath} (use --force to overwrite)`)
   }
 
   await fs.writeFile(outputPath, output, 'utf-8')

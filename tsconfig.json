@@ -43,5 +43,9 @@
     "skipLibCheck": true,
 
     "moduleResolution": "bundler",
-  }
+  },
+  // Only src belongs to the root program (test/ has its own tsconfig.json).
+  // Without this, the default "**/*" pulls test files in and TS6059 fails
+  // because they are not under rootDir.
+  "include": ["src"],
 }
