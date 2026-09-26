@@ -7,7 +7,8 @@ function insertAfterLastImport(content: string, importLine: string): string {
   const lines = content.split('\n')
   let lastImportIdx = -1
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].trimStart().startsWith('import ')) lastImportIdx = i
+    const line = lines[i]
+    if (line !== undefined && line.trimStart().startsWith('import ')) lastImportIdx = i
   }
   if (lastImportIdx === -1) return importLine + '\n' + content
   lines.splice(lastImportIdx + 1, 0, importLine)
@@ -69,20 +70,25 @@ export async function registerRouteInRouter(
   config: VfConfig,
   featureName: string,
   nameCamel: string,
-): Promise<void> {
+  opts: { dryRun?: boolean; silent?: boolean } = {},
+): Promise<{ registered: boolean; reason?: string }> {
   const routerPath = path.join(root, config.srcDir, 'router', 'index.ts')
 
   if (!(await fs.pathExists(routerPath))) {
-    log.warn(`Router not found at ${path.relative(root, routerPath)} — skipping route registration.`)
-    return
+    const reason = `Router not found at ${path.relative(root, routerPath)} — skipping route registration.`
+    if (!opts.silent) log.warn(reason)
+    return { registered: false, reason }
   }
 
   let content = await fs.readFile(routerPath, 'utf-8')
 
   if (content.includes(`${nameCamel}Routes`)) {
-    log.info(`Route for "${featureName}" is already registered in the router (skipped).`)
-    return
+    const reason = `Route for "${featureName}" is already registered in the router (skipped).`
+    if (!opts.silent) log.info(reason)
+    return { registered: false, reason }
   }
+
+  if (opts.dryRun) return { registered: false, reason: 'dry-run: route would be registered' }
 
   const routerDir = path.dirname(routerPath)
   const featureRoutesPath = path.join(root, config.featuresDir, featureName, 'routes')
@@ -93,5 +99,6 @@ export async function registerRouteInRouter(
   content = insertBeforeRoutesClose(content, `...${nameCamel}Routes`)
 
   await fs.writeFile(routerPath, content, 'utf-8')
-  log.success(`Registered route in ${path.relative(root, routerPath)}`)
+  if (!opts.silent) log.success(`Registered route in ${path.relative(root, routerPath)}`)
+  return { registered: true }
 }
