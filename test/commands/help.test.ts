@@ -26,7 +26,7 @@ describe('help', () => {
     await project.cleanup()
   })
 
-  const output = () => logSpy.mock.calls.map((call) => call.join(' ')).join('\n')
+  const output = () => logSpy.mock.calls.map((call: any[]) => call.join(' ')).join('\n')
 
   it('prints detailed docs for a known command', async () => {
     await help('init')
