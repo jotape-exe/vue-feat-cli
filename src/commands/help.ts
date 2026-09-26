@@ -86,11 +86,11 @@ export async function help(command?: string): Promise<void> {
   const choice = await select({
     message: 'Open detailed help for a command?',
     options: [
-      ...Object.values(COMMAND_DOCS).map((d) => ({
-        value: d.name,
-        label: d.name,
-        hint: d.alias ?? undefined,
-      })),
+      ...Object.values(COMMAND_DOCS).map((d) =>
+        d.alias
+          ? { value: d.name, label: d.name, hint: d.alias }
+          : { value: d.name, label: d.name },
+      ),
       { value: '__exit__', label: 'Exit' },
     ],
   })

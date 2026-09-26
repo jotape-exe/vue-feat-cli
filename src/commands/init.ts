@@ -14,7 +14,7 @@ async function detectAlias(root: string): Promise<string | null> {
     const paths = tsconfig.compilerOptions?.paths ?? {}
     for (const key of Object.keys(paths)) {
       const match = key.match(/^(.+)\/\*$/)
-      if (match) return match[1]
+      if (match?.[1]) return match[1]
     }
   } catch {
     return null
