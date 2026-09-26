@@ -1,6 +1,16 @@
 import fs from 'fs-extra'
 import path from 'path'
 
+export type FeatLayer =
+  | 'service'
+  | 'serviceComposable'
+  | 'pageComposable'
+  | 'store'
+  | 'types'
+  | 'index'
+  | 'routes'
+  | 'view'
+
 export interface VfConfig {
   srcDir: string
   featuresDir: string
@@ -11,6 +21,8 @@ export interface VfConfig {
   usesVueRouter: boolean
   usesTanstackQuery: boolean
   templatesDir?: string
+  /** Per-layer defaults. `false` disables the layer unless re-enabled via `--only`. */
+  layers?: Partial<Record<FeatLayer, boolean>>
 }
 
 export const defaultConfig: VfConfig = {
